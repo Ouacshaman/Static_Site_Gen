@@ -68,93 +68,62 @@ def split_nodes_images(old_nodes):
     temp = []
     for node in old_nodes:
         if node:
-            if re.findall(r"!\[(.*?)\]\((.*?)\)", node.text) == []:
+            if extract_markdown_images(node.text) == []:
                 temp.append(node)
-            record = extract_markdown_images(node.text)
-            new_txt = node.text
-            magic = trap(new_txt, record, r"!\[(.*?)\]\((.*?)\)")
-            res = transfer(magic,
-                           node.text_type,
-                           "image", r"!\[(.*?)\]\((.*?)\)")
-            temp.extend(res)
-        else:
-            pass
+            else:
+                new_txt = node.text
+                record = extract_markdown_images(node.text)
+                for i in range(len(record)):
+                    a = trap_image(new_txt, node.text_type, record[i])
+                    if i < len(record)-1:
+                        temp.extend(a[0:len(a)-1])
+                        new_txt = a[len(a)-1].text
+                    else:
+                        temp.extend(a)
     return temp
+
+
+def trap_image(text, type, tup):
+    markdown = f"![{tup[0]}]({tup[1]})"
+    split = text.split(markdown)
+    return eliminate_empty_node([TextNode(split[0], type),
+                                 TextNode(tup[0], "image", tup[1]),
+                                 TextNode(split[1], type)])
 
 
 def split_nodes_link(old_nodes):
     temp = []
     for node in old_nodes:
         if node:
-            if re.findall(r"\[(.*?)\]\((.*?)\)", node.text) == []:
+            if extract_markdown_links(node.text) == []:
                 temp.append(node)
-            record = extract_markdown_links(node.text)
-            new_txt = node.text
-            magic = trap(new_txt, record, r"\[(.*?)\]\((.*?)\)")
-            res = transfer(magic,
-                           node.text_type,
-                           "link", r"\[(.*?)\]\((.*?)\)")
-            temp.extend(res)
-        else:
-            pass
+            else:
+                new_txt = node.text
+                record = extract_markdown_links(node.text)
+                for i in range(len(record)):
+                    a = trap_link(new_txt, node.text_type, record[i])
+                    if i < len(record)-1:
+                        temp.extend(a[0:len(a)-1])
+                        new_txt = a[len(a)-1].text
+                    else:
+                        temp.extend(a)
     return temp
 
 
-def trap(text, record, pattern):
-    new_txt = text
-    rec = []
-    new_rec = []
-    tup_rec = []
-    single = ""
-    if pattern == r"!\[(.*?)\]\((.*?)\)":
-        single = "!"
-    if pattern == r"\[(.*?)\]\((.*?)\)":
-        single = ""
-    for tup in record:
-        tup_rec.append(f"{single}[{tup[0]}]({tup[1]})")
-        ref = new_txt.split(f"{single}[{tup[0]}]({tup[1]})", 1)
-        for item in ref:
-            if re.findall(pattern, item) == []:
-                rec.append(item)
-        new_txt = "".join(ref)
-    for i in range(len(rec)):
-        new_rec.append(rec[i][len(rec[i-1]):])
-    new_list = tup_rec
-    new_list.extend(new_rec)
-    tuple_list = []
-    for item in new_list:
-        tuple_list.append((item, text.index(item)))
-    sorted_list = sorted(tuple_list, key=lambda x: x[1])
-    no_empty = []
-    for item in sorted_list:
-        if item[0] != '':
-            no_empty.append(item)
-    return no_empty
+def trap_link(text, type, tup):
+    markdown = f"[{tup[0]}]({tup[1]})"
+    split = text.split(markdown)
+    return eliminate_empty_node([TextNode(split[0], type),
+                                 TextNode(tup[0], "link", tup[1]),
+                                 TextNode(split[1], type)])
 
 
-
-def transfer(lst, old, new, pttr):
-    new_lst = []
-    for item in lst:
-        if re.findall(pttr, item[0]) == []:
-            new_lst.append(TextNode(item[0], old))
-        else:
-            re_run = re.findall(pttr, item[0])
-            new_lst.append(TextNode(re_run[0][0], new, re_run[0][1]))
-    return new_lst
-
-
-
-
-
-
-
-
-
-
-
-
-
+def eliminate_empty_node(list):
+    replacement = []
+    for item in list:
+        if item.text != '':
+            replacement.append(item)
+    return replacement
 
 
 
