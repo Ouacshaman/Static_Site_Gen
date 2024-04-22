@@ -64,7 +64,7 @@ def extract_markdown_links(text):
     return temp_tup
 
 
-def split_nodes_images(old_nodes):
+def split_nodes_image(old_nodes):
     temp = []
     for node in old_nodes:
         if node:

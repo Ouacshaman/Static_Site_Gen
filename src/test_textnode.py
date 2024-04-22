@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, split_nodes_delimiter, split_nodes_images, split_nodes_link
+from textnode import TextNode, split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
 class TestTextNode(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestTextNode(unittest.TestCase):
             TextNode("code block", "code"),
             TextNode(" word", "text"),
         ])
-        self.assertEqual(split_nodes_images([node6]), [
+        self.assertEqual(split_nodes_image([node6]), [
             TextNode("This is text with an ", "text"),
             TextNode("image",
                      "image",
