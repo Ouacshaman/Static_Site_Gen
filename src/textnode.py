@@ -23,8 +23,9 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     res = []
     for node in old_nodes:
         temp_list = []
-        if isinstance(node, TextNode) is False:
+        if not isinstance(node, TextNode):
             res.append(node)
+            continue
         if checker_of_dem(delimiter, node.text) is False:
             raise Exception("Invalid Markdown Syntax " +
                             "there are only " +
@@ -126,5 +127,10 @@ def eliminate_empty_node(list):
     return replacement
 
 
-
-
+def text_to_textnodes(text):
+    node = TextNode(text, "text")
+    code_strip = split_nodes_delimiter([node], "`", "code")
+    bold_strip = split_nodes_delimiter(code_strip, "**", "bold")
+    italic_strip = split_nodes_delimiter(bold_strip, "*", "italic")
+    flt_link_img = split_nodes_link(split_nodes_image(italic_strip))
+    return flt_link_img

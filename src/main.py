@@ -1,4 +1,6 @@
 from textnode import TextNode
+import os
+import shutil
 
 
 def main():
@@ -7,3 +9,9 @@ def main():
 
 
 main()
+
+
+def copy_static(input_dir, target_dir):
+    if not os.path.exists(target_dir):
+        pass
+
