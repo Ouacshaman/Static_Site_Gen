@@ -6,9 +6,9 @@ import shutil
 def main():
     Init_node = TextNode("drunken fist", "bold", "www.google.com")
     print(Init_node)
-
-
-main()
+    static_path = "/Users/shihong/Downloads/Code/Create/proj04/Static_Site_Gen/static/"
+    public_path = "/Users/shihong/Downloads/Code/Create/proj04/Static_Site_Gen/public/"
+    copy_static(static_path, public_path)
 
 
 def copy_static(input, target):
@@ -47,7 +47,8 @@ def final_copy_over(input_dir, target_dir):
             final_copy_over(os.path.join(input_dir, item), moved)
 
 
-
+if __name__ == "__main__":
+    main()
 
 
 
