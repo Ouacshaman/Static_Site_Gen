@@ -67,7 +67,10 @@ class ParentNode(HTMLNode):
         if self.props is not None:
             chg_prop += " " + self.props_to_html()
         for item in self.children:
-            temp.append(item.to_html())
+            try:
+                temp.append(item.to_html())
+            except NotImplementedError as e:
+                print(f"Failed to call to_html on {type(item)}: {e}")
         joined = "".join(temp)
         res = f"<{self.tag}{chg_prop}>{joined}</{self.tag}>"
         return res

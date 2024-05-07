@@ -1,5 +1,5 @@
 import re
-from htmlnode import HTMLNode, ParentNode
+from htmlnode import LeafNode, ParentNode
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
@@ -89,7 +89,7 @@ def quote_to_html(txt):
     chk_pt = re.findall(r">.*", txt)
     res = []
     for item in chk_pt:
-        res.append(HTMLNode("blockquote", item.strip(">")))
+        res.append(LeafNode("blockquote", item.strip(">")))
     return res
 
 
@@ -97,7 +97,7 @@ def ul_to_html(txt):
     chk_pt = re.findall(r"\s*[*-]\s.*", txt)
     res = []
     for item in chk_pt:
-        res.append(HTMLNode("li", re.sub(r"^\s*[-,*]\s", "", item).strip()))
+        res.append(LeafNode("li", re.sub(r"^\s*[-,*]\s", "", item).strip()))
     return ParentNode("ul", res)
 
 
@@ -105,13 +105,13 @@ def ol_to_html(txt):
     chk_pt = re.findall(r"[0-9]*\.\s.*", txt)
     res = []
     for item in chk_pt:
-        res.append(HTMLNode("li", re.sub(r"^[0-9]*\.\s", "", item).strip()))
+        res.append(LeafNode("li", re.sub(r"^[0-9]*\.\s", "", item).strip()))
     return ParentNode("ol", res)
 
 
 def code_to_html(txt):
     chk_pt = txt.strip("`")
-    res = HTMLNode("code", chk_pt)
+    res = LeafNode("code", chk_pt)
     return ParentNode("pre", [res])
 
 
@@ -123,9 +123,9 @@ def hd_to_html(txt):
         else:
             break
     if re.match(r"^#{1,6}\s+.*", txt):
-        return HTMLNode(f"h{header_ct}", txt.lstrip("#").strip())
+        return LeafNode(f"h{header_ct}", txt.lstrip("#").strip())
     return p_to_html(txt)
 
 
 def p_to_html(txt):
-    return HTMLNode("p", txt)
+    return LeafNode("p", txt)
